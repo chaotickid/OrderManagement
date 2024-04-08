@@ -8,3 +8,7 @@ logging:
 app:
   auth:
     security: internal
+    methodLevelSecurity: true
+jwtToken:
+  secretKey: '9z$C&F)J@NcRfUjXn2r5u8x!A%D*G-KaPdSgVkYp3s6v9y$B?E(H+MbQeThWmZq4'
+  expirationTime: 3600000

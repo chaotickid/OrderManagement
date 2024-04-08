@@ -3,7 +3,6 @@ package com.gens.usermanagement.service;
 import com.gens.common.constants.Constants;
 import com.gens.common.exceptionHandling.CustomResponseException;
 import com.gens.common.exceptionHandling.ErrorCodeEnum;
-import com.gens.common.model.MetaData;
 import com.gens.common.utils.JwtTokenProvider;
 import com.gens.usermanagement.config.UserConfigs;
 import com.gens.usermanagement.model.document.User;
@@ -53,7 +52,7 @@ public class UserService {
      * @param signUpRequest
      * @return
      */
-    public User addUser(UserVM signUpRequest) {
+    public User createClient(UserVM signUpRequest) {
         if (StringUtils.isBlank(signUpRequest.getEmail()) || StringUtils.isBlank(signUpRequest.getPassword())) {
             log.error("Either email id or password is blank");
             throw new CustomResponseException(ErrorCodeEnum.ER1002, HttpStatus.BAD_REQUEST);
@@ -73,10 +72,38 @@ public class UserService {
             user.setIsAccountVerified(String.valueOf(Boolean.TRUE));
             user.setIsEmailVerified(String.valueOf(Boolean.FALSE));
             user.setIsAccountLocked(String.valueOf(Boolean.FALSE));
-            MetaData metaData = new MetaData();
-            metaData.setCreatedAt(String .valueOf(Instant.now()));
-            metaData.setUpdatedAt(String .valueOf(Instant.now()));
-            user.setMetaData(metaData);
+            user.setRole(Constants.CLIENT);
+            user.setPrimaryDetails(signUpRequest.getPrimaryDetails());
+            log.debug("Finalized used details: {}", user);
+            userRepository.save(user);
+        } catch (Exception e) {
+            log.error("Unable to create a user. Reason: {}", e.getMessage());
+            throw new CustomResponseException(ErrorCodeEnum.ER1000, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return user;
+    }
+
+    public User createAdmin(UserVM signUpRequest) {
+        if (StringUtils.isBlank(signUpRequest.getEmail()) || StringUtils.isBlank(signUpRequest.getPassword())) {
+            log.error("Either email id or password is blank");
+            throw new CustomResponseException(ErrorCodeEnum.ER1002, HttpStatus.BAD_REQUEST);
+        }
+        Optional<User> alreadyHaveAUser = userRepository.findByEmail(signUpRequest.getEmail());
+        if (alreadyHaveAUser.isPresent()) {
+            log.error("User is already present with same email id: {}", signUpRequest.getEmail());
+            throw new CustomResponseException(ErrorCodeEnum.ER1001, HttpStatus.CONFLICT);
+        }
+        User user = new User();
+        try {
+            user.setEmail(signUpRequest.getEmail());
+            user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+            user.setLastLoginAt(String.valueOf(Instant.now()));
+            user.setGivenName(signUpRequest.getGivenName());
+            user.setFamilyName(signUpRequest.getGivenName());
+            user.setIsAccountVerified(String.valueOf(Boolean.TRUE));
+            user.setIsEmailVerified(String.valueOf(Boolean.FALSE));
+            user.setIsAccountLocked(String.valueOf(Boolean.FALSE));
+            user.setRole(Constants.CLIENT);
             user.setPrimaryDetails(signUpRequest.getPrimaryDetails());
             log.debug("Finalized used details: {}", user);
             userRepository.save(user);
@@ -130,9 +157,6 @@ public class UserService {
         try {
             log.debug("Validated user name successfully");
             passwordVerification(signInRequest.getPassword(), fetchedUser.get());
-            MetaData fetchedMetaData = fetchedUser.get().getMetaData();
-            fetchedMetaData.setUpdatedAt(String.valueOf(Instant.now()));
-            fetchedUser.get().setMetaData(fetchedMetaData);
             userRepository.save(fetchedUser.get());
             log.debug("Updated user values in the database successfully");
         } catch (Exception e) {

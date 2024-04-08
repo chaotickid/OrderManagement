@@ -1,11 +1,12 @@
 package com.gens.usermanagement.model.document;
 
-import com.gens.common.model.MetaData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Data
@@ -24,8 +25,11 @@ public class User {
 
     private String familyName;
 
+    @Email(message = "invalid email format detected for parameter 'email'")
+    @Column(unique = true)
     private String email;
 
+    @NotNull
     private String password;
 
     private String role;
@@ -42,9 +46,5 @@ public class User {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private PrimaryDetails primaryDetails;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    private MetaData metaData;
-
 
 }

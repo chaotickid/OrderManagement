@@ -96,6 +96,7 @@ public class CommonAuthorizationFilter extends BasicAuthenticationFilter {
             log.debug("User authenticated successfully, storing user in the security context holder");
             userAuthorizationVM.setEmail(globalTokenVM.getEmail());
             userAuthorizationVM.setSecretKey(globalTokenVM.getSecretKey());
+            userAuthorizationVM.setRole(globalTokenVM.getRole());
             preAuthenticatedAuthenticationToken = new PreAuthenticatedAuthenticationToken(userAuthorizationVM, idToken, new ArrayList<>());
             return preAuthenticatedAuthenticationToken;
         } catch (Exception e) {

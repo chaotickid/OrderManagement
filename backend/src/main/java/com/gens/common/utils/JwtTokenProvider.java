@@ -7,7 +7,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -21,12 +21,11 @@ import java.util.Date;
 @Slf4j
 public class JwtTokenProvider {
 
-    @Autowired
-    private HttpServletRequest request;
+    @Value("${jwtToken.secretKey}")
+    private String secretKey;
 
-    private static String secretKey = "9z$C&F)J@NcRfUjXn2r5u8x!A%D*G-KaPdSgVkYp3s6v9y$B?E(H+MbQeThWmZq4";
-
-    private long validityInMilliseconds = 3600000;
+    @Value("${jwtToken.expirationTime}")
+    private long validityInMilliseconds;
 
     @PostConstruct
     protected void init() {
@@ -36,7 +35,7 @@ public class JwtTokenProvider {
     public String createToken(User userDetails) {
         Claims claims = Jwts.claims().setSubject(userDetails.getEmail());
         claims.put("email", userDetails.getEmail());
-        claims.put("role", "student");
+        claims.put("role", userDetails.getRole().toLowerCase());
         claims.put("customerId", userDetails.getCustomerId());
         claims.put("secretKey", userDetails.getUuid());
         Date now = new Date();

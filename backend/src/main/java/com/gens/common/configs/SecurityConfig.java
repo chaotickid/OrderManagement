@@ -74,8 +74,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeHttpRequests()
                 .antMatchers("/v2/api-docs/**",
                         "/v3/api-docs/**",
-                        "/api/usermanagement/signup/**",
-                        "/api/usermanagement/signin/**")
+                        "/api/v1/signup/client**",
+                        "/api/v1/permission/client/**",
+                        "/api/v1/signin/**")
                 .permitAll().anyRequest().authenticated().and().requestCache()
                 .requestCache(new NullRequestCache()).and()
                 .addFilter(new CommonAuthorizationFilter(authenticationManager(), jwtTokenProvider, userService, globalTokenDecoder, environment))
