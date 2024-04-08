@@ -4,28 +4,7 @@ spring:
 logging:
   level:
     org.springframework: DEBUG
-    com.infinity: DEBUG
-couchbase-doc-maintainer:
-  user-management:
-    user-resource:
-      classIdValue: 9002
-      initialValue: 10000
-  ticket-management:
-    ticket-resource:
-      classIdValue: 9003
-      initialValue: 10000
-  accountManagement:
-    customerResource:
-      classIdValue: 2000
-      initialValue: 1000
-  orderManagement:
-    orderResource:
-      classIdValue: 3000
-      initialValue: 1000
-  productCatalog:
-    productResource:
-      classIdValue: 4000
-      initialValue: 1000
+    com.gens: DEBUG
 app:
   auth:
     security: internal

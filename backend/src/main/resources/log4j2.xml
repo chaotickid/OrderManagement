@@ -62,7 +62,7 @@
         <logger name="audit" level="INFO">
             <AppenderRef ref="audit" />
         </logger>
-        <Logger name="com.infinity" level="debug" additivity="false">
+        <Logger name="com.gens" level="debug" additivity="false">
             <AppenderRef ref="file" />
             <AppenderRef ref="Console" />
             <!-- <AppenderRef ref="NatsAppender" /> -->
