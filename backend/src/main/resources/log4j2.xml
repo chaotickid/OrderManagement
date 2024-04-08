@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Properties>
+        <Property name="sleuthInfo">%X{spanId},%X{traceId}</Property>
+        <property name="LOG_LEVEL"
+                  value="%highlight{%-5p}{STYLE=Default}" />
+        <property name="CONSOLE_PATTERN_LAYOUT"
+                  value="%d{ISO8601} %-5p [${sleuthInfo}] [%-15t] %-50C{1.}:  %msg%n%throwable" />
+        <property name="FILE_PATTERN_LAYOUT"
+                  value="%d{ISO8601} %-5p [${sleuthInfo}] [%-15t] %-50C{1.}:  %msg%n%throwable" />
+        <property name="AUDIT_PATTERN_LAYOUT"
+                  value="%msg%n%throwable" />
+        <property name="NATS_PATTERN_LAYOUT"
+                  value="[%d{ISO8601}][%-5level][%corrId]:[%-.15t] %logger{2}- %msg" />
+        <property name="LOGS" value="/var/log/dep" />
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout disableAnsi="true"
+                           pattern="%highlight{${CONSOLE_PATTERN_LAYOUT}}" />
+        </Console>
+
+        <RollingFile name="file"
+                     fileName="${LOGS}/infinity.log"
+                     filePattern="${LOGS}/%d{yyyy-MM,aux}/archive_%d{yyyy-MM-dd}_infinity_%i.log">
+            <PatternLayout>
+                <pattern>${FILE_PATTERN_LAYOUT}</pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="50 MB" />
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="audit"
+                     fileName="${LOGS}/infinity_audit.log"
+                     filePattern="${LOGS}/%d{yyyy-MM,aux}/archive_%d{yyyy-MM-dd}_infinity_audit_%i.log">
+            <PatternLayout>
+                <pattern>${AUDIT_PATTERN_LAYOUT}</pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="50 MB" />
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+
+        <NatsAppender name="NatsAppender">
+            <PatternLayout
+                    pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}][%-5level][%corrId]:[%-.15t] %logger{2}- %msg" />
+        </NatsAppender>
+    </Appenders>
+    <Loggers>
+        <!-- LOG everything at INFO level -->
+        <Root level="info">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="file" />
+        </Root>
+
+        <logger name="audit" level="INFO">
+            <AppenderRef ref="audit" />
+        </logger>
+        <Logger name="com.infinity" level="debug" additivity="false">
+            <AppenderRef ref="file" />
+            <AppenderRef ref="Console" />
+            <!-- <AppenderRef ref="NatsAppender" /> -->
+        </Logger>
+    </Loggers>
+</Configuration>

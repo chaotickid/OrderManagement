@@ -1,0 +1,35 @@
+{
+  "givenName": "Aditya",
+  "familyName": "Patil",
+  "email": "aditya13@yopmail.com",
+  "password": "123",
+  "role": "admin",
+  "primaryDetails": {
+    "firstName": "",
+    "middleName": "",
+    "lastName": "",
+    "age": "",
+    "sex": "",
+    "birthDate": "",
+    "startDate": "",
+    "endDate": "",
+    "documents": [
+      {
+        "documentId": "",
+        "documentType": ""
+      }
+    ],
+    "address": [
+      {
+        "pinCode": "416115",
+        "houseNo": "7/280",
+        "area": "sonpawali Hanumn Temple",
+        "landMark": "near Mauli traders",
+        "city": "Ichalkaranji",
+        "state": "Maharashtra",
+        "country": "India",
+        "isPrimary": true
+      }
+    ]
+  }
+}
